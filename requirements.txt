@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+faiss-cpu
+transformers
+sentence-transformers
+torch
+pydantic 
+requests
+beautifulsoup4
+trafilatura 
+playwright 
+selenium 
+webdriver-manager
+langchain 
+langchain-community 
