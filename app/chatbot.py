@@ -17,8 +17,8 @@ def setup_chatbot():
     """Setup the chatbot components"""
     
     # Get environment variables
-    PINECONE_API_KEY = os.environ.get("PINECONE_API_KEY")
-    HF_TOKEN = os.environ.get("HF_TOKEN")
+    PINECONE_API_KEY = st.secrets["PINECONE_API_KEY"]
+    HF_TOKEN = st.secrets["HF_TOKEN"]
     index_name = "jewel-changi-airport-index"
     
     if not PINECONE_API_KEY or not HF_TOKEN:
