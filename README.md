@@ -6,7 +6,7 @@ A Retrieval-Augmented Generation (RAG) chatbot for Changi Airport and Jewel, pow
 
 ## Features
 
-- **Local Knowledge Base:** Uses your own `source_data.txt` for airport info.
+- **Local Knowledge Base:** Uses your own `source_data.txt` for airport info extracted using selenium web scaping.
 - **LLM-Powered:** Uses Qwen model via HuggingFace Router for natural language answers.
 - **Pinecone Vector Database:** Cloud-based vector storage for efficient similarity search.
 - **Streamlit Web Interface:** Clean, user-friendly chat interface.
