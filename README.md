@@ -1,16 +1,17 @@
-# Changi Airport Chatbot (FastAPI + Ollama + FAISS)
+# Changi Airport Chatbot (Streamlit + Pinecone + HuggingFace)
 
-A Retrieval-Augmented Generation (RAG) chatbot for Changi Airport and Jewel, powered by local embeddings, FAISS, and an LLM served by Ollama. Exposes a secure FastAPI web API for easy integration and sharing.
+A Retrieval-Augmented Generation (RAG) chatbot for Changi Airport and Jewel, powered by HuggingFace embeddings, Pinecone vector database, and Qwen LLM. Features a clean Streamlit web interface for easy interaction.
 
 ---
 
 ## Features
 
 - **Local Knowledge Base:** Uses your own `source_data.txt` for airport info.
-- **LLM-Powered:** Uses Ollama (e.g., Llama3) for natural language answers.
-- **FastAPI Web API:** Easily deployable and accessible via HTTP.
-- **API Key Security:** Protects your endpoint with an API key.
-- **No External Web Search:** All answers are from your local data or static flight status info.
+- **LLM-Powered:** Uses Qwen model via HuggingFace Router for natural language answers.
+- **Pinecone Vector Database:** Cloud-based vector storage for efficient similarity search.
+- **Streamlit Web Interface:** Clean, user-friendly chat interface.
+- **Concise Responses:** Direct, practical answers without verbose formatting.
+- **No External Web Search:** All answers are from your local data.
 
 ---
 
@@ -28,64 +29,51 @@ pip install -r requirements.txt
 
 - Place your knowledge base text in `data/source_data.txt`.
 
-### 3. Start Ollama
+### 3. Set Environment Variables
 
-Make sure [Ollama](https://ollama.com/) is installed and running, and the model (e.g., `llama3`) is available:
+You'll need to set up the following environment variables:
 
 ```bash
-ollama serve
-ollama pull llama3
+# For Pinecone vector database
+export PINECONE_API_KEY=your-pinecone-api-key
+
+# For HuggingFace Router
+export HF_TOKEN=your-huggingface-token
 ```
 
-### 4. Set API Key (Optional but recommended)
-
-Set an environment variable for your API key:
+Or create a `.env` file in the project root:
 
 ```bash
-export CHATBOT_API_KEY=your-secret-api-key
-```
-Or edit the value in `app/main.py`.
-
----
-
-## Running the API
-
-Start the FastAPI server:
-
-```bash
-uvicorn app.main:app --host 0.0.0.0 --port 8000
+PINECONE_API_KEY=your-pinecone-api-key
+HF_TOKEN=your-huggingface-token
 ```
 
 ---
 
-## API Usage
+## Running the Chatbot
 
-### **POST /chat**
+Start the Streamlit application:
 
-- **Request Body:**
-  ```json
-  {
-    "question": "Where can I eat at Changi Airport?",
-    "api_key": "your-secret-api-key"
-  }
-  ```
-- **Response:**
-  ```json
-  {
-    "answer": "Final Answer: [detailed answer here]"
-  }
-  ```
+```bash
+cd app
+streamlit run chatbot.py
+```
+
+The chatbot will automatically:
+1. Load your source data
+2. Create embeddings using HuggingFace
+3. Set up Pinecone vector database
+4. Initialize the Qwen LLM
+5. Launch the web interface
 
 ---
 
-## Deployment
+## Usage
 
-- For a public link, deploy to [Railway](https://railway.app/), [Render](https://render.com/), or similar.
-- Or use [ngrok](https://ngrok.com/) for a quick public tunnel:
-  ```bash
-  ngrok http 8000
-  ```
-  Share the generated public URL.
+1. **Open your browser** to the URL shown in the terminal (usually `http://localhost:8501`)
+2. **Wait for setup** - the chatbot will initialize automatically
+3. **Start chatting** - ask questions about Changi Airport and Jewel
+4. **Get concise answers** - responses are direct and practical
 
 ---
 
@@ -93,8 +81,8 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 ```
 app/
-  chatbot.py      # Main chatbot logic (LLM, retrieval, prompt, etc.)
-  main.py         # FastAPI app exposing the /chat endpoint
+  chatbot.py      # Main Streamlit chatbot application
+  main.py         # FastAPI app (legacy, not used in current version)
 data/
   source_data.txt # Your knowledge base
 requirements.txt
@@ -103,25 +91,37 @@ README.md
 
 ---
 
-## Security
+## Features
 
-- All API requests require the correct API key.
-- Do not share your API key publicly.
+- **Automatic Setup:** No manual configuration needed
+- **Chat History:** Maintains conversation during session
+- **Error Handling:** Graceful error messages
+- **Responsive Design:** Works on desktop and mobile
+- **Real-time Processing:** Immediate responses
 
 ---
 
-## Example cURL Request
+## Security
 
-```bash
-curl -X POST "http://localhost:8000/chat" \
-  -H "Content-Type: application/json" \
-  -d '{"question": "Where can I eat at Changi Airport?", "api_key": "your-secret-api-key"}'
-```
+- Keep your Pinecone API key secure
+- Keep your HuggingFace token secure
+- No sensitive data is stored locally
 
 ---
 
 ## Troubleshooting
 
-- Ensure Ollama is running and the model is pulled.
-- Ensure `data/source_data.txt` exists and is not empty.
-- Check your API key matches the server’s. 
+- **Environment Variables:** Ensure `PINECONE_API_KEY` and `HF_TOKEN` are set
+- **Data File:** Make sure `data/source_data.txt` exists and is not empty
+- **Pinecone Credits:** Ensure you have sufficient Pinecone credits
+- **Internet Connection:** Required for HuggingFace and Pinecone services
+
+---
+
+## Example Questions
+
+- "Where can I eat at Changi Airport?"
+- "What shops are in Terminal 3?"
+- "How do I get to Jewel from Terminal 1?"
+- "What are the operating hours for restaurants?"
+- "Where can I find luxury brands?" 

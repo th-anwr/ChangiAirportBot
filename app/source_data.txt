@@ -1,0 +1,1 @@
+This is a sample data file for the Changi Airport chatbot. YOTELAIR is located in Jewel Changi Airport. The MRT station is in Terminal 2.
