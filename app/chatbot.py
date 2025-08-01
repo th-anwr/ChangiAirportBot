@@ -17,15 +17,15 @@ def setup_chatbot():
     """Setup the chatbot components"""
     
     # Get environment variables
-    PINECONE_API_KEY = os.environ.get("PINECONE_API_KEY")
-    HF_TOKEN = os.environ.get("HF_TOKEN")
+    PINECONE_API_KEY = st.secrets.get("pinecone")
+    HF_TOKEN = st.secrets.get("hftoken")
     index_name = "jewel-changi-airport-index"
     
     if not PINECONE_API_KEY or not HF_TOKEN:
         return None
     
     # Load documents
-    DATA_PATH = "../data/source_data.txt"
+    DATA_PATH = "./data/source_data.txt"
     
     def load_txt_file(file_path):
         loader = TextLoader(file_path, encoding='utf-8')
@@ -36,15 +36,14 @@ def setup_chatbot():
         documents = load_txt_file(DATA_PATH)
     except Exception as e:
         return None
-    
     # Create chunks
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=150)
     text_chunks = text_splitter.split_documents(documents)
     
     # Initialize embedding model
     embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    
     # Setup Pinecone
+    os.environ["PINECONE_API_KEY"] = PINECONE_API_KEY
     pc = Pinecone(api_key=PINECONE_API_KEY)
     
     # Check if index exists, if not create it
@@ -57,13 +56,14 @@ def setup_chatbot():
         )
         import time
         time.sleep(10)
-    
     # Create or connect to vector store
     try:
         docsearch = PineconeVectorStore.from_existing_index(
             index_name=index_name,
-            embedding=embedding_model
+            embedding=embedding_model,
+            api_key=PINECONE_API_KEY
         )
+        print(docsearch)
     except Exception as e:
         docsearch = PineconeVectorStore.from_texts(
             texts=[chunk.page_content for chunk in text_chunks],
@@ -72,7 +72,6 @@ def setup_chatbot():
         )
     
     retriever = docsearch.as_retriever(search_type="similarity", search_kwargs={"k": 5})
-    
     # Initialize LLM
     llm = ChatOpenAI(
         base_url="https://router.huggingface.co/v1",
